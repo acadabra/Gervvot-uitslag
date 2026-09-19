@@ -1,0 +1,1416 @@
+<!DOCTYPE html>
+<html lang="nl">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Volleybal uitslag</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 15px;
+    background: #eef1f5;
+    font-family: Arial, sans-serif;
+    color: #222;
+}
+
+.app {
+    max-width: 520px;
+    margin: 0 auto;
+    background: white;
+    padding: 22px;
+    border-radius: 18px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+}
+
+h1 {
+    text-align: center;
+    color: #174ea6;
+    margin: 5px 0 25px;
+}
+
+label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.input-row {
+    display: flex;
+    gap: 8px;
+}
+
+input[type="text"],
+input[type="number"] {
+    border: 1px solid #bbb;
+    border-radius: 9px;
+    padding: 13px;
+    font-size: 18px;
+    background: white;
+}
+
+input[type="text"] {
+    flex: 1;
+    width: 100%;
+}
+
+input[type="number"] {
+    width: 90px;
+    text-align: center;
+}
+
+input.invalid {
+    border: 2px solid #c62828;
+    background: #ffebee;
+}
+
+.mic {
+    width: 52px;
+    min-width: 52px;
+    height: 50px;
+    border: none;
+    border-radius: 50%;
+    background: #e8f0fe;
+    color: #174ea6;
+    font-size: 23px;
+    cursor: pointer;
+}
+
+.mic.listening {
+    background: #e53935;
+    color: white;
+}
+
+.set {
+    margin-top: 22px;
+}
+
+.set-title {
+    font-weight: bold;
+    margin-bottom: 8px;
+}
+
+.score-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.dash {
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.hint {
+    color: #777;
+    font-size: 13px;
+    margin-top: 6px;
+}
+
+.result {
+    margin-top: 25px;
+    padding: 16px;
+    background: #e8f0fe;
+    border-radius: 10px;
+    text-align: center;
+    color: #174ea6;
+    font-size: 23px;
+    font-weight: bold;
+}
+
+.send {
+    width: 100%;
+    margin-top: 20px;
+    padding: 16px;
+    border: none;
+    border-radius: 10px;
+    background: #174ea6;
+    color: white;
+    font-size: 19px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.send:hover {
+    background: #123d82;
+}
+
+.status {
+    text-align: center;
+    min-height: 25px;
+    margin-top: 15px;
+    color: #555;
+    font-size: 14px;
+}
+
+.error {
+    color: #c62828;
+    font-weight: bold;
+}
+
+.success {
+    color: #2e7d32;
+    font-weight: bold;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="app">
+
+<h1>🏐 Volleybal uitslag</h1>
+
+<label for="match">
+Welke match?
+</label>
+
+<div class="input-row">
+
+<input
+    type="text"
+    id="match"
+    placeholder="Thuisploeg - Uitploeg"
+>
+
+<button
+    class="mic"
+    id="matchMic"
+    onclick="speakMatch()"
+    title="Wedstrijd inspreken"
+>
+🎤
+</button>
+
+</div>
+
+<div class="hint">
+Bijvoorbeeld: "Turnhout tegen Antwerpen"
+</div>
+
+
+<!-- SET 1 -->
+
+<div class="set">
+
+<div class="set-title">
+Set 1
+</div>
+
+<div class="score-row">
+
+<input
+    type="number"
+    id="set1home"
+    min="0"
+    inputmode="numeric"
+    placeholder="0"
+>
+
+<span class="dash">-</span>
+
+<input
+    type="number"
+    id="set1away"
+    min="0"
+    inputmode="numeric"
+    placeholder="0"
+>
+
+<button
+    class="mic"
+    id="set1Mic"
+    onclick="speakSet(1)"
+    title="Set 1 inspreken"
+>
+🎤
+</button>
+
+</div>
+
+<div class="hint">
+Bijvoorbeeld: "vijfentwintig ... eenentwintig"
+</div>
+
+</div>
+
+
+<!-- SET 2 -->
+
+<div class="set">
+
+<div class="set-title">
+Set 2
+</div>
+
+<div class="score-row">
+
+<input
+    type="number"
+    id="set2home"
+    min="0"
+    inputmode="numeric"
+    placeholder="0"
+>
+
+<span class="dash">-</span>
+
+<input
+    type="number"
+    id="set2away"
+    min="0"
+    inputmode="numeric"
+    placeholder="0"
+>
+
+<button
+    class="mic"
+    id="set2Mic"
+    onclick="speakSet(2)"
+    title="Set 2 inspreken"
+>
+🎤
+</button>
+
+</div>
+
+</div>
+
+
+<!-- SET 3 -->
+
+<div class="set">
+
+<div class="set-title">
+Set 3
+</div>
+
+<div class="score-row">
+
+<input
+    type="number"
+    id="set3home"
+    min="0"
+    inputmode="numeric"
+    placeholder="0"
+>
+
+<span class="dash">-</span>
+
+<input
+    type="number"
+    id="set3away"
+    min="0"
+    inputmode="numeric"
+    placeholder="0"
+>
+
+<button
+    class="mic"
+    id="set3Mic"
+    onclick="speakSet(3)"
+    title="Set 3 inspreken"
+>
+🎤
+</button>
+
+</div>
+
+</div>
+
+
+<!-- SET 4 -->
+
+<div class="set">
+
+<div class="set-title">
+Set 4
+</div>
+
+<div class="score-row">
+
+<input
+    type="number"
+    id="set4home"
+    min="0"
+    inputmode="numeric"
+    placeholder="0"
+>
+
+<span class="dash">-</span>
+
+<input
+    type="number"
+    id="set4away"
+    min="0"
+    inputmode="numeric"
+    placeholder="0"
+>
+
+<button
+    class="mic"
+    id="set4Mic"
+    onclick="speakSet(4)"
+    title="Set 4 inspreken"
+>
+🎤
+</button>
+
+</div>
+
+</div>
+
+
+<!-- SET 5 -->
+
+<div class="set">
+
+<div class="set-title">
+Set 5
+<span style="font-weight:normal;color:#777;">
+(optioneel)
+</span>
+</div>
+
+<div class="score-row">
+
+<input
+    type="number"
+    id="set5home"
+    min="0"
+    inputmode="numeric"
+    placeholder="0"
+>
+
+<span class="dash">-</span>
+
+<input
+    type="number"
+    id="set5away"
+    min="0"
+    inputmode="numeric"
+    placeholder="0"
+>
+
+<button
+    class="mic"
+    id="set5Mic"
+    onclick="speakSet(5)"
+    title="Set 5 inspreken"
+>
+🎤
+</button>
+
+</div>
+
+</div>
+
+
+<div
+    id="status"
+    class="status"
+></div>
+
+
+<div class="result">
+
+Eindscore:
+
+<span id="finalScore">
+0 - 0
+</span>
+
+</div>
+
+
+<button
+    class="send"
+    onclick="sendEmail()"
+>
+VERSTUREN
+</button>
+
+</div>
+
+
+<script>
+
+/* ==================================================
+   E-MAILADRES
+   ================================================== */
+
+const RECEIVER_EMAIL = "VERVANG-DIT-DOOR-EMAILADRES";
+
+
+/* ==================================================
+   SPRAAKHERKENNING
+   ================================================== */
+
+function getSpeechRecognition() {
+
+    return window.SpeechRecognition ||
+           window.webkitSpeechRecognition;
+
+}
+
+
+/* ==================================================
+   STATUS
+   ================================================== */
+
+function setStatus(text, type) {
+
+    const status = document.getElementById("status");
+
+    status.textContent = text;
+
+    status.className = "status";
+
+    if (type) {
+        status.classList.add(type);
+    }
+}
+
+
+/* ==================================================
+   MICROFOON STATUS
+   ================================================== */
+
+function setMicActive(id, active) {
+
+    const button = document.getElementById(id);
+
+    if (!button) {
+        return;
+    }
+
+    if (active) {
+        button.classList.add("listening");
+    } else {
+        button.classList.remove("listening");
+    }
+}
+
+
+/* ==================================================
+   WEDSTRIJD INSPREKEN
+   ================================================== */
+
+function speakMatch() {
+
+    const SpeechRecognition = getSpeechRecognition();
+
+    if (!SpeechRecognition) {
+
+        alert(
+            "Deze browser ondersteunt geen spraakherkenning."
+        );
+
+        return;
+    }
+
+    const recognition = new SpeechRecognition();
+
+    recognition.lang = "nl-BE";
+    recognition.interimResults = false;
+    recognition.continuous = false;
+
+    setMicActive("matchMic", true);
+
+    setStatus("🎤 Luisteren...");
+
+    recognition.onresult = function(event) {
+
+        const text =
+            event.results[0][0].transcript;
+
+        document.getElementById("match").value = text;
+
+        setStatus(
+            "✓ Wedstrijd ingevuld",
+            "success"
+        );
+    };
+
+    recognition.onerror = function(event) {
+
+        setStatus(
+            "❌ Spraakfout: " + event.error,
+            "error"
+        );
+    };
+
+    recognition.onend = function() {
+
+        setMicActive("matchMic", false);
+    };
+
+    try {
+
+        recognition.start();
+
+    } catch (error) {
+
+        console.log(error);
+
+        setMicActive("matchMic", false);
+    }
+}
+
+
+/* ==================================================
+   SET INSPREKEN
+   ================================================== */
+
+function speakSet(setNumber) {
+
+    const SpeechRecognition = getSpeechRecognition();
+
+    if (!SpeechRecognition) {
+
+        alert(
+            "Deze browser ondersteunt geen spraakherkenning."
+        );
+
+        return;
+    }
+
+    const recognition = new SpeechRecognition();
+
+    recognition.lang = "nl-BE";
+    recognition.interimResults = false;
+    recognition.continuous = false;
+
+    const micId = "set" + setNumber + "Mic";
+
+    setMicActive(micId, true);
+
+    setStatus(
+        "🎤 Set " +
+        setNumber +
+        ": spreek de twee scores in..."
+    );
+
+    recognition.onresult = function(event) {
+
+        const text =
+            event.results[0][0].transcript;
+
+        console.log(
+            "Spraak herkend:",
+            text
+        );
+
+        const scores = extractScore(text);
+
+        console.log(
+            "Gevonden score:",
+            scores
+        );
+
+        if (scores.length === 2) {
+
+            document.getElementById(
+                "set" + setNumber + "home"
+            ).value = scores[0];
+
+            document.getElementById(
+                "set" + setNumber + "away"
+            ).value = scores[1];
+
+            clearInvalidStyle(setNumber);
+
+            calculateScore();
+
+            setStatus(
+                "✓ Set " +
+                setNumber +
+                ": " +
+                scores[0] +
+                " - " +
+                scores[1],
+                "success"
+            );
+
+        } else {
+
+            setStatus(
+                "❌ Ongeldige volleybalscore. " +
+                "Zeg bijvoorbeeld: 25 ... 21",
+                "error"
+            );
+        }
+    };
+
+    recognition.onerror = function(event) {
+
+        setStatus(
+            "❌ Spraakfout: " +
+            event.error,
+            "error"
+        );
+    };
+
+    recognition.onend = function() {
+
+        setMicActive(micId, false);
+    };
+
+    try {
+
+        recognition.start();
+
+    } catch (error) {
+
+        console.log(error);
+
+        setMicActive(micId, false);
+    }
+}
+
+
+/* ==================================================
+   GELDIGE VOLLEYBALSCORE
+   ================================================== */
+
+function isValidVolleyballScore(a, b) {
+
+    if (!Number.isInteger(a) ||
+        !Number.isInteger(b)) {
+
+        return false;
+    }
+
+    if (a < 0 || b < 0) {
+        return false;
+    }
+
+    if (a === b) {
+        return false;
+    }
+
+    const winner = Math.max(a, b);
+    const loser = Math.min(a, b);
+
+    const difference = winner - loser;
+
+    /*
+       Een normale set wordt gewonnen bij
+       minstens 25 punten en 2 punten verschil.
+    */
+
+    if (winner < 25) {
+        return false;
+    }
+
+    if (difference < 2) {
+        return false;
+    }
+
+    /*
+       Boven 25 moet het verschil exact 2 zijn.
+
+       27 - 25  geldig
+       30 - 28  geldig
+       37 - 35  geldig
+
+       37 - 2    ongeldig
+       32 - 10   ongeldig
+    */
+
+    if (winner > 25 && difference !== 2) {
+        return false;
+    }
+
+    return true;
+}
+
+
+/* ==================================================
+   FOUTMARKERING
+   ================================================== */
+
+function clearInvalidStyle(setNumber) {
+
+    const home =
+        document.getElementById(
+            "set" + setNumber + "home"
+        );
+
+    const away =
+        document.getElementById(
+            "set" + setNumber + "away"
+        );
+
+    home.classList.remove("invalid");
+    away.classList.remove("invalid");
+}
+
+
+/* ==================================================
+   SET CONTROLEREN
+   ================================================== */
+
+function validateSet(setNumber) {
+
+    const homeInput =
+        document.getElementById(
+            "set" + setNumber + "home"
+        );
+
+    const awayInput =
+        document.getElementById(
+            "set" + setNumber + "away"
+        );
+
+    const homeText =
+        homeInput.value.trim();
+
+    const awayText =
+        awayInput.value.trim();
+
+
+    /*
+       Set 5 mag volledig leeg zijn.
+    */
+
+    if (
+        setNumber === 5 &&
+        homeText === "" &&
+        awayText === ""
+    ) {
+
+        clearInvalidStyle(setNumber);
+
+        return true;
+    }
+
+
+    /*
+       Als slechts één kant is ingevuld,
+       is de score ongeldig.
+    */
+
+    if (
+        homeText === "" ||
+        awayText === ""
+    ) {
+
+        homeInput.classList.add("invalid");
+        awayInput.classList.add("invalid");
+
+        setStatus(
+            "❌ Set " +
+            setNumber +
+            ": beide scores invullen.",
+            "error"
+        );
+
+        return false;
+    }
+
+
+    const home = Number(homeText);
+    const away = Number(awayText);
+
+
+    if (
+        !isValidVolleyballScore(
+            home,
+            away
+        )
+    ) {
+
+        homeInput.classList.add("invalid");
+        awayInput.classList.add("invalid");
+
+        setStatus(
+            "❌ Ongeldige score in Set " +
+            setNumber +
+            ": " +
+            home +
+            " - " +
+            away +
+            ".",
+            "error"
+        );
+
+        return false;
+    }
+
+
+    clearInvalidStyle(setNumber);
+
+    return true;
+}
+
+
+/* ==================================================
+   ALLE SETS CONTROLEREN
+   ================================================== */
+
+function validateAllScores() {
+
+    let allValid = true;
+
+    for (
+        let i = 1;
+        i <= 5;
+        i++
+    ) {
+
+        const valid = validateSet(i);
+
+        if (!valid) {
+            allValid = false;
+        }
+    }
+
+    return allValid;
+}
+
+
+/* ==================================================
+   NEDERLANDSE GETALLEN
+   ================================================== */
+
+const dutchNumbers = {
+
+    "nul": 0,
+
+    "een": 1,
+    "één": 1,
+
+    "twee": 2,
+    "drie": 3,
+    "vier": 4,
+    "vijf": 5,
+    "zes": 6,
+    "zeven": 7,
+    "acht": 8,
+    "negen": 9,
+
+    "tien": 10,
+    "elf": 11,
+    "twaalf": 12,
+    "dertien": 13,
+    "veertien": 14,
+    "vijftien": 15,
+    "zestien": 16,
+    "zeventien": 17,
+    "achttien": 18,
+    "negentien": 19,
+
+    "twintig": 20,
+
+    "eenentwintig": 21,
+    "tweeëntwintig": 22,
+    "tweeentwintig": 22,
+    "drieëntwintig": 23,
+    "drieentwintig": 23,
+    "vierentwintig": 24,
+    "vijfentwintig": 25,
+    "zesentwintig": 26,
+    "zevenentwintig": 27,
+    "achtentwintig": 28,
+    "negenentwintig": 29,
+
+    "dertig": 30,
+
+    "eenendertig": 31,
+    "tweeëndertig": 32,
+    "tweeendertig": 32,
+    "drieëndertig": 33,
+    "drieendertig": 33,
+    "vierendertig": 34,
+    "vijfendertig": 35,
+    "zesendertig": 36,
+    "zevenendertig": 37,
+    "achtendertig": 38,
+    "negenendertig": 39,
+
+    "veertig": 40
+};
+
+
+/* ==================================================
+   SCORE UIT SPRAAK HALEN
+   ================================================== */
+
+function extractScore(text) {
+
+    text = text
+        .toLowerCase()
+        .trim();
+
+
+    /*
+       Eerst Nederlandse getalwoorden.
+    */
+
+    const words =
+        text
+            .replace(/[-,.;!?]/g, " ")
+            .split(/\s+/)
+            .filter(Boolean);
+
+
+    const spokenNumbers = [];
+
+
+    for (const word of words) {
+
+        if (
+            Object.prototype.hasOwnProperty.call(
+                dutchNumbers,
+                word
+            )
+        ) {
+
+            spokenNumbers.push(
+                dutchNumbers[word]
+            );
+        }
+    }
+
+
+    /*
+       Bijvoorbeeld:
+       "vijfentwintig eenentwintig"
+    */
+
+    if (
+        spokenNumbers.length >= 2
+    ) {
+
+        const a = spokenNumbers[0];
+        const b = spokenNumbers[1];
+
+        if (
+            isValidVolleyballScore(a, b)
+        ) {
+
+            return [a, b];
+        }
+    }
+
+
+    /*
+       Normale cijfers.
+    */
+
+    const matches =
+        text.match(/\d+/g);
+
+
+    if (
+        matches &&
+        matches.length >= 2
+    ) {
+
+        const a =
+            parseInt(
+                matches[0],
+                10
+            );
+
+        const b =
+            parseInt(
+                matches[1],
+                10
+            );
+
+
+        if (
+            isValidVolleyballScore(a, b)
+        ) {
+
+            return [a, b];
+        }
+    }
+
+
+    /*
+       Browser kan bijvoorbeeld "25 21"
+       als "2521" doorgeven.
+    */
+
+    const digitsOnly =
+        text.replace(/\D/g, "");
+
+
+    if (
+        digitsOnly.length < 2
+    ) {
+
+        return [];
+    }
+
+
+    const candidates = [];
+
+
+    for (
+        let split = 1;
+        split < digitsOnly.length;
+        split++
+    ) {
+
+        const left =
+            parseInt(
+                digitsOnly.substring(
+                    0,
+                    split
+                ),
+                10
+            );
+
+        const right =
+            parseInt(
+                digitsOnly.substring(
+                    split
+                ),
+                10
+            );
+
+
+        if (
+            isValidVolleyballScore(
+                left,
+                right
+            )
+        ) {
+
+            candidates.push(
+                [left, right]
+            );
+        }
+    }
+
+
+    /*
+       Alleen automatisch invullen wanneer
+       er exact één mogelijke score is.
+    */
+
+    if (
+        candidates.length === 1
+    ) {
+
+        return candidates[0];
+    }
+
+
+    return [];
+}
+
+
+/* ==================================================
+   EINDSCORE BEREKENEN
+   ================================================== */
+
+function calculateScore() {
+
+    let homeSets = 0;
+    let awaySets = 0;
+
+
+    for (
+        let i = 1;
+        i <= 5;
+        i++
+    ) {
+
+        const homeInput =
+            document.getElementById(
+                "set" + i + "home"
+            );
+
+        const awayInput =
+            document.getElementById(
+                "set" + i + "away"
+            );
+
+
+        const homeText =
+            homeInput.value.trim();
+
+        const awayText =
+            awayInput.value.trim();
+
+
+        if (
+            homeText === "" ||
+            awayText === ""
+        ) {
+
+            continue;
+        }
+
+
+        const home = Number(homeText);
+        const away = Number(awayText);
+
+
+        /*
+           Ongeldige sets tellen niet mee.
+        */
+
+        if (
+            !isValidVolleyballScore(
+                home,
+                away
+            )
+        ) {
+
+            continue;
+        }
+
+
+        if (home > away) {
+
+            homeSets++;
+
+        } else if (away > home) {
+
+            awaySets++;
+        }
+    }
+
+
+    document.getElementById(
+        "finalScore"
+    ).textContent =
+        homeSets +
+        " - " +
+        awaySets;
+}
+
+
+/* ==================================================
+   HANDMATIG INVULLEN
+   ================================================== */
+
+document
+    .querySelectorAll(
+        'input[type="number"]'
+    )
+    .forEach(function(input) {
+
+        input.addEventListener(
+            "input",
+            function() {
+
+                const match =
+                    input.id.match(
+                        /^set(\d+)(home|away)$/
+                    );
+
+
+                if (match) {
+
+                    const setNumber =
+                        parseInt(
+                            match[1],
+                            10
+                        );
+
+                    clearInvalidStyle(
+                        setNumber
+                    );
+                }
+
+
+                calculateScore();
+            }
+        );
+
+
+        input.addEventListener(
+            "blur",
+            function() {
+
+                const match =
+                    input.id.match(
+                        /^set(\d+)(home|away)$/
+                    );
+
+
+                if (!match) {
+                    return;
+                }
+
+
+                const setNumber =
+                    parseInt(
+                        match[1],
+                        10
+                    );
+
+
+                const home =
+                    document.getElementById(
+                        "set" +
+                        setNumber +
+                        "home"
+                    ).value.trim();
+
+
+                const away =
+                    document.getElementById(
+                        "set" +
+                        setNumber +
+                        "away"
+                    ).value.trim();
+
+
+                /*
+                   Nog niets ingevuld:
+                   geen fout tonen.
+                */
+
+                if (
+                    home === "" &&
+                    away === ""
+                ) {
+
+                    clearInvalidStyle(
+                        setNumber
+                    );
+
+                    return;
+                }
+
+
+                validateSet(setNumber);
+
+                calculateScore();
+            }
+        );
+    });
+
+
+/* ==================================================
+   E-MAIL VERSTUREN
+   ================================================== */
+
+function sendEmail() {
+
+    const match =
+        document.getElementById(
+            "match"
+        ).value.trim();
+
+
+    if (
+        match === ""
+    ) {
+
+        alert(
+            "Vul eerst de wedstrijd in."
+        );
+
+        return;
+    }
+
+
+    /*
+       Eerst alle scores controleren.
+       Bij één ongeldige score wordt NIET
+       verstuurd.
+    */
+
+    if (
+        !validateAllScores()
+    ) {
+
+        return;
+    }
+
+
+    calculateScore();
+
+
+    const finalScore =
+        document.getElementById(
+            "finalScore"
+        ).textContent;
+
+
+    let message =
+        "Wedstrijd: " +
+        match +
+        "\n\n";
+
+
+    message +=
+        "Eindscore: " +
+        finalScore +
+        "\n\n";
+
+
+    for (
+        let i = 1;
+        i <= 5;
+        i++
+    ) {
+
+        const home =
+            document.getElementById(
+                "set" + i + "home"
+            ).value;
+
+
+        const away =
+            document.getElementById(
+                "set" + i + "away"
+            ).value;
+
+
+        if (
+            home !== "" ||
+            away !== ""
+        ) {
+
+            message +=
+                "Set " +
+                i +
+                ": " +
+                home +
+                " - " +
+                away +
+                "\n";
+        }
+    }
+
+
+    const subject =
+        "Volleybal uitslag - " +
+        match;
+
+
+const mailto =
+    "mailto:goetschalckxe@gmail.com" +
+    "?subject=" +
+    encodeURIComponent(subject) +
+    "&body=" +
+    encodeURIComponent(message);
+
+
+    window.location.href =
+        mailto;
+}
+
+</script>
+
+</body>
+</html>
+
