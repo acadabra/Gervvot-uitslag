@@ -169,6 +169,19 @@ input.invalid {
 
 <h1>🏐 Volleybal uitslag</h1>
 
+
+<label for="series">
+    Welke reeks?
+</label>
+
+<input
+    type="text"
+    id="series"
+    placeholder="Bijvoorbeeld: Heren reeks 1"
+    style="width:100%; margin-bottom:20px;"
+>
+
+
 <label for="match">
 Welke match?
 </label>
@@ -414,6 +427,46 @@ Set 5
 </div>
 
 
+<!-- MOGELIJKE WISSELSPELERS -->
+
+<div class="set">
+    <div class="set-title">Mogelijke wisselspelers</div>
+
+    <div class="input-row" style="margin-bottom:10px;">
+        <input type="text" id="substitute1" placeholder="Wisselspeler 1">
+        <button class="mic" id="substitute1Mic" onclick="speakSubstitute(1)" title="Wisselspeler 1 inspreken">🎤</button>
+    </div>
+
+    <div class="input-row">
+        <input type="text" id="substitute2" placeholder="Wisselspeler 2">
+        <button class="mic" id="substitute2Mic" onclick="speakSubstitute(2)" title="Wisselspeler 2 inspreken">🎤</button>
+    </div>
+</div>
+
+<div class="set">
+
+    <div class="set-title">
+        Eventuele opmerkingen
+    </div>
+
+    <textarea
+        id="remarks"
+        placeholder="evt bericht aan wedstrijdleiding"
+        rows="5"
+        style="
+            width:100%;
+            border:1px solid #bbb;
+            border-radius:9px;
+            padding:13px;
+            font-size:16px;
+            font-family:Arial,sans-serif;
+            resize:vertical;
+        "
+    ></textarea>
+
+</div>
+
+
 <div
     id="status"
     class="status"
@@ -504,6 +557,113 @@ function setMicActive(id, active) {
    WEDSTRIJD INSPREKEN
    ================================================== */
 
+function createRecognition() {
+    const SpeechRecognition = getSpeechRecognition();
+
+    if (!SpeechRecognition) {
+        return null;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.lang = "nl-BE";
+    recognition.interimResults = false;
+    recognition.continuous = false;
+    recognition.maxAlternatives = 5;
+
+    return recognition;
+}
+
+/*
+   De browser blijft verantwoordelijk voor de eigenlijke
+   spraakherkenning. Deze laag corrigeert daarna typische
+   herkenningsfouten. Zo wordt bijvoorbeeld "Heerenveen"
+   in een korte invoer als "Heren" gecorrigeerd.
+*/
+const speechCorrections = {
+    "heerenveen": "heren",
+    "heer en veen": "heren",
+    "heren veen": "heren"
+};
+
+function normalizeSpeechText(text) {
+    return text
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[.,!?;:]+/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+}
+
+function correctSpeechText(text) {
+    const normalized = normalizeSpeechText(text);
+    return speechCorrections[normalized] || text.trim();
+}
+
+function getBestTranscript(event) {
+    if (!event.results || !event.results[0]) {
+        return "";
+    }
+
+    const alternatives = event.results[0];
+
+    // Kijk eerst of één van de alternatieven exact overeenkomt
+    // met een bekende correctie.
+    for (let i = 0; i < alternatives.length; i++) {
+        const candidate = alternatives[i].transcript || "";
+        const normalized = normalizeSpeechText(candidate);
+
+        if (speechCorrections[normalized]) {
+            return speechCorrections[normalized];
+        }
+    }
+
+    return correctSpeechText(
+        alternatives[0] ? alternatives[0].transcript : ""
+    );
+}
+
+function speakSubstitute(number) {
+    const recognition = createRecognition();
+
+    if (!recognition) {
+        alert("Deze browser ondersteunt geen spraakherkenning.");
+        return;
+    }
+
+    const micId = "substitute" + number + "Mic";
+
+    setMicActive(micId, true);
+    setStatus("🎤 Luisteren naar wisselspeler...");
+
+    recognition.onresult = function(event) {
+        const text = getBestTranscript(event);
+
+        document.getElementById("substitute" + number).value = text;
+
+        setStatus(
+            "✓ Wisselspeler " + number + " ingevuld",
+            "success"
+        );
+    };
+
+    recognition.onerror = function(event) {
+        setStatus("❌ Spraakfout: " + event.error, "error");
+    };
+
+    recognition.onend = function() {
+        setMicActive(micId, false);
+    };
+
+    try {
+        recognition.start();
+    } catch (error) {
+        console.log(error);
+        setMicActive(micId, false);
+    }
+}
+
+
 function speakMatch() {
 
     const SpeechRecognition = getSpeechRecognition();
@@ -517,11 +677,12 @@ function speakMatch() {
         return;
     }
 
-    const recognition = new SpeechRecognition();
+    const recognition = createRecognition();
 
-    recognition.lang = "nl-BE";
-    recognition.interimResults = false;
-    recognition.continuous = false;
+    if (!recognition) {
+        alert("Deze browser ondersteunt geen spraakherkenning.");
+        return;
+    }
 
     setMicActive("matchMic", true);
 
@@ -529,8 +690,7 @@ function speakMatch() {
 
     recognition.onresult = function(event) {
 
-        const text =
-            event.results[0][0].transcript;
+        const text = getBestTranscript(event);
 
         document.getElementById("match").value = text;
 
@@ -583,11 +743,12 @@ function speakSet(setNumber) {
         return;
     }
 
-    const recognition = new SpeechRecognition();
+    const recognition = createRecognition();
 
-    recognition.lang = "nl-BE";
-    recognition.interimResults = false;
-    recognition.continuous = false;
+    if (!recognition) {
+        alert("Deze browser ondersteunt geen spraakherkenning.");
+        return;
+    }
 
     const micId = "set" + setNumber + "Mic";
 
@@ -601,8 +762,7 @@ function speakSet(setNumber) {
 
     recognition.onresult = function(event) {
 
-        const text =
-            event.results[0][0].transcript;
+        const text = getBestTranscript(event);
 
         console.log(
             "Spraak herkend:",
@@ -949,7 +1109,12 @@ function extractScore(text) {
 
     text = text
         .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
         .trim();
+
+    // Leestekens uit spraakherkenning als scheiding behandelen.
+    text = text.replace(/[.,;!?-]/g, " ").replace(/\s+/g, " ").trim();
 
 
     /*
@@ -1355,6 +1520,27 @@ function sendEmail() {
         "Eindscore: " +
         finalScore +
         "\n\n";
+
+
+    const substitute1 =
+        document.getElementById("substitute1").value.trim();
+
+    const substitute2 =
+        document.getElementById("substitute2").value.trim();
+
+    if (substitute1 !== "" || substitute2 !== "") {
+        message += "Mogelijke wisselspelers:\n";
+
+        if (substitute1 !== "") {
+            message += "1. " + substitute1 + "\n";
+        }
+
+        if (substitute2 !== "") {
+            message += "2. " + substitute2 + "\n";
+        }
+
+        message += "\n";
+    }
 
 
     for (
