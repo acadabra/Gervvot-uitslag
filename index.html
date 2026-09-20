@@ -168,18 +168,35 @@ input.invalid {
 <div class="app">
 
 <h1>🏐 Volleybal uitslag</h1>
-
-
 <label for="series">
     Welke reeks?
 </label>
 
-<input
-    type="text"
-    id="series"
-    placeholder="Bijvoorbeeld: Heren reeks 1"
-    style="width:100%; margin-bottom:20px;"
->
+<div class="input-row">
+
+    <input
+        type="text"
+        id="series"
+        placeholder="Bijvoorbeeld: Heren 1e provinciale"
+    >
+
+    <button
+        class="mic"
+        id="seriesMic"
+        onclick="speakSeries()"
+        title="Reeks inspreken"
+    >
+        🎤
+    </button>
+
+</div>
+
+<div class="hint">
+    Bijvoorbeeld: "Heren eerste provinciale"
+</div>
+
+
+
 
 
 <label for="match">
