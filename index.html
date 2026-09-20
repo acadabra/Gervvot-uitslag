@@ -679,6 +679,81 @@ function speakSubstitute(number) {
         setMicActive(micId, false);
     }
 }
+function speakSeries() {
+
+    const recognition = createRecognition();
+
+    if (!recognition) {
+        alert(
+            "Deze browser ondersteunt geen spraakherkenning."
+        );
+        return;
+    }
+
+    setMicActive("seriesMic", true);
+
+    setStatus("🎤 Luisteren naar de reeks...");
+
+    recognition.onresult = function(event) {
+
+        const text = getBestTranscript(event);
+
+        if (text !== "") {
+
+            document.getElementById("series").value = text;
+
+            setStatus(
+                "✓ Reeks ingevuld: " + text,
+                "success"
+            );
+
+        } else {
+
+            setStatus(
+                "❌ Geen reeks verstaan.",
+                "error"
+            );
+        }
+    };
+
+    recognition.onerror = function(event) {
+
+        console.log(
+            "Spraakfout reeks:",
+            event.error
+        );
+
+        setStatus(
+            "❌ Spraakfout: " + event.error,
+            "error"
+        );
+    };
+
+    recognition.onend = function() {
+
+        setMicActive("seriesMic", false);
+    };
+
+    try {
+
+        recognition.start();
+
+    } catch (error) {
+
+        console.log(
+            "Kon microfoon niet starten:",
+            error
+        );
+
+        setMicActive("seriesMic", false);
+
+        setStatus(
+            "❌ Microfoon kon niet worden gestart.",
+            "error"
+        );
+    }
+}
+
 
 
 function speakMatch() {
