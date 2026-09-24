@@ -1630,21 +1630,19 @@ function sendEmail() {
         if (substitute2 !== "") {
             message += "2. " + substitute2 + "\n";
         }/* OPMERKINGEN AAN WEDSTRIJDLEIDING */
-const remarks =
-    document.getElementById("remarks").value.trim();
-
-if (remarks !== "") {
-    message +=
-        "Opmerkingen aan wedstrijdleiding:\n" +
-        remarks +
-        "\n\n";
-}
-
-        message += "\n";
     }
+    const remarks =
+         document.getElementById("remarks").value.trim();
+
+    if (remarks !== "") {
+        message +=
+            "Opmerkingen aan wedstrijdleiding:\n" +
+            remarks +
+            "\n\n";
+    }
+
+        message += "\n"
     
-
-
     for (
         let i = 1;
         i <= 5;
